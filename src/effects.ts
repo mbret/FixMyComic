@@ -48,7 +48,8 @@ const fixComic = async (sourcePath: string, dispatch: Dispatch<AppAction>) => {
 
   console.log('repacking fixed epub into original file')
   await ipcRenderer.invoke('zip', { src: TMP_FOLDER, dest: destPath })
-  // fs.rmdirSync(TMP_FOLDER, { recursive: true });
+  console.log('remove', TMP_FOLDER)
+  await fs.rmdir(TMP_FOLDER, { recursive: true })
 
   console.log(`Your fixed file has been created at ${destPath}`)
 }
@@ -65,12 +66,17 @@ export const fixComics: Effect = async (action, dispatch, getState) => {
       await Promise.all(state.files.map(file => fixComic(file, dispatch)))
     } catch (e) {
       console.error(e)
+      dispatch({ type: 'FIX_FAILED' })
+      new Notification('FixMyComic', {
+        body: 'An error happened during the process'
+      })
+      return
     }
 
     dispatch({ type: 'FIXING_UPDATE_PROGRESS', payload: 100 })
     console.log('finshed working on', state.files)
 
-    new Notification('Fix My Comic', {
+    new Notification('FixMyComic', {
       body: 'Your comics have been fixed'
     })
 

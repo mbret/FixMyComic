@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import extractZip from 'extract-zip'
 import fs from 'fs'
 import archiver from 'archiver'
+import * as fsWrapper from './fsWrapper'
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -20,7 +21,9 @@ const createWindow = () => {
     width: 1200,
   });
 
-  mainWindow.removeMenu()
+  if (process.env.NODE_ENV !== 'development') {
+    mainWindow.removeMenu()
+  }
   
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -100,35 +103,6 @@ ipcMain.handle('zip', async (e, payload) => {
 
 })
 
-ipcMain.handle('readdir', (e, payload) => fs.promises.readdir(payload))
-ipcMain.handle('writeFile', async (e, ...args: Parameters<typeof fs.promises.writeFile>) => {
-  try {
-    await fs.promises.writeFile(...args)
-  } catch (e) {
-    return {
-      error: {
-        message: e.message,
-        code: e.code
-      }
-    }
-  }
-
-  return {}
-})
-ipcMain.handle('mkdir', async (e, ...args: Parameters<typeof fs.promises.mkdir>) => {
-  try {
-    await fs.promises.mkdir(...args)
-  } catch (e) {
-    return {
-      error: {
-        message: e.message,
-        code: e.code
-      }
-    }
-  }
-
-  return {}
-})
 ipcMain.handle('readFile', (e, ...args: Parameters<typeof fs.promises.readFile>) => fs.promises.readFile(...args))
 
 ipcMain.handle('isDirectory', async (e, payload) => {
@@ -138,3 +112,5 @@ ipcMain.handle('isDirectory', async (e, payload) => {
 
   return false
 })
+
+fsWrapper.register(ipcMain)

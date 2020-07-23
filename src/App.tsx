@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone'
 import { useFlow } from './utils';
 import * as effects from './effects';
 import { reducer, initialState } from './reducers';
-import { ProgressBar, Button, Alert, Spinner } from 'react-bootstrap';
+import { ProgressBar, Button, Alert, Spinner, Dropdown, DropdownButton } from 'react-bootstrap';
 
 const App = () => {
   const [state, dispatch] = useFlow(reducer, initialState, Object.values(effects))
@@ -18,6 +18,36 @@ const App = () => {
     <div style={{
       backgroundColor: 'white'
     }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+      }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+          <div style={{
+            marginRight: 10
+          }}>Input format</div>
+          <DropdownButton title={state.selectedInputFormat} variant="info">
+            <Dropdown.Item href="#/action-1">epub-calibre</Dropdown.Item>
+          </DropdownButton>
+        </div>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+          <div style={{
+            marginRight: 10
+          }}>Output format</div>
+          <DropdownButton title="fixed-layout" variant="info">
+            <Dropdown.Item href="#/action-1">fixed-layout</Dropdown.Item>
+          </DropdownButton>
+        </div>
+      </div>
       <div
         style={{
           border: '1px solid gray',

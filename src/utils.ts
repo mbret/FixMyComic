@@ -8,14 +8,16 @@ import sizeOf from 'image-size'
 import { remote, ipcRenderer } from 'electron'
 import * as fs from './utils/fs'
 import { Reducer, Dispatch, ReducerState, ReducerAction, useReducer, useState, useRef, useCallback, useEffect } from 'react'
+import { Dirent } from 'fs'
 
 let MAX_HEIGHT = 1024;
 
 export const walkFileRecursive = async (dir: string, callback: (path: string) => void) => {
-  const files: string[] = await ipcRenderer.invoke('readdir', dir)
+  const files: Dirent[] = await fs.readdir(dir, { encoding: 'utf-8', withFileTypes: true })
+  console.log(files)
   await Promise.all(
     files.map(async (file) => {
-      const subPath = path.join(dir, file);
+      const subPath = path.join(dir, file.name);
       const isDirectory = await ipcRenderer.invoke('isDirectory', subPath)
       if (isDirectory) {
         await walkFileRecursive(subPath, callback);

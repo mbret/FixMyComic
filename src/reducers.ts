@@ -4,10 +4,12 @@ export const initialState: {
   fixing: boolean;
   fixingProgress: number;
   files: string[];
+  selectedInputFormat: 'epub-calibre';
 } = {
   fixing: false,
   fixingProgress: 0,
-  files: []
+  files: [],
+  selectedInputFormat: 'epub-calibre'
 }
 
 export type AppState = typeof initialState
@@ -15,6 +17,7 @@ export type AppState = typeof initialState
 export type AppAction =
   | { type: 'FIX_START' }
   | { type: 'FIX_SUCCESS' }
+  | { type: 'FIX_FAILED' }
   | { type: 'UPDATE_FILES'; payload: File[] }
   | { type: 'FIXING_UPDATE_PROGRESS'; payload: number }
 
@@ -37,6 +40,12 @@ export const reducer: Reducer<AppState, AppAction> = (state, action) => {
       return {
         ...state,
         fixing: false,
+      }
+    case 'FIX_FAILED':
+      return {
+        ...state,
+        fixing: false,
+        fixingProgress: 0,
       }
     case 'FIXING_UPDATE_PROGRESS':
       return {
