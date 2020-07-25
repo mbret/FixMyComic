@@ -1,13 +1,17 @@
 import { Reducer, Dispatch } from "react"
 
 export const initialState: {
+  backup: boolean;
   fixing: boolean;
   fixingProgress: number;
+  lastFixingError: Error | null;
   files: string[];
   selectedInputFormat: 'epub-calibre';
 } = {
+  backup: true,
   fixing: false,
   fixingProgress: 0,
+  lastFixingError: null,
   files: [],
   selectedInputFormat: 'epub-calibre'
 }
@@ -17,14 +21,14 @@ export type AppState = typeof initialState
 export type AppAction =
   | { type: 'FIX_START' }
   | { type: 'FIX_SUCCESS' }
-  | { type: 'FIX_FAILED' }
+  | { type: 'FIX_FAILED'; payload: Error }
   | { type: 'UPDATE_FILES'; payload: File[] }
   | { type: 'FIXING_UPDATE_PROGRESS'; payload: number }
 
 export type Effect = (action: AppAction, dispatch: Dispatch<AppAction>, getState: () => AppState) => void
 
 export const reducer: Reducer<AppState, AppAction> = (state, action) => {
-  console.log('run reducer')
+  console.log('reducer', action)
   switch (action.type) {
     case 'UPDATE_FILES':
       return {
@@ -40,12 +44,14 @@ export const reducer: Reducer<AppState, AppAction> = (state, action) => {
       return {
         ...state,
         fixing: false,
+        lastFixingError: null,
       }
     case 'FIX_FAILED':
       return {
         ...state,
         fixing: false,
         fixingProgress: 0,
+        lastFixingError: action.payload,
       }
     case 'FIXING_UPDATE_PROGRESS':
       return {

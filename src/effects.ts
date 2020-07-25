@@ -1,14 +1,26 @@
-import { Effect, AppAction } from "./reducers"
-import { walkFileRecursive, fixFile } from "./utils"
+import { Effect, AppAction, AppState } from "./reducers"
+import { fixFile } from "./utils"
 import { ipcRenderer } from "electron"
 import path from "path"
 import * as fs from './utils/fs'
 import { Dispatch } from "react"
 
-const fixComic = async (sourcePath: string, dispatch: Dispatch<AppAction>) => {
+const fixComic = async (
+  sourcePath: string,
+  dispatch: Dispatch<AppAction>,
+  getState: () => AppState
+) => {
   console.log(`Unpacking ${sourcePath}`)
   const destPath = sourcePath
   const TMP_FOLDER = `${sourcePath}.tmp`
+  const backupDest = `${sourcePath}.backup`
+
+  if (getState().backup) {
+    await fs.copyFile(sourcePath, backupDest)
+    console.log(`backup created at ${backupDest}`)
+  }
+
+  dispatch({ type: 'FIXING_UPDATE_PROGRESS', payload: 10 })
 
   await ipcRenderer.invoke('unzip', { source: sourcePath, dir: TMP_FOLDER })
 
@@ -17,7 +29,7 @@ const fixComic = async (sourcePath: string, dispatch: Dispatch<AppAction>) => {
   dispatch({ type: 'FIXING_UPDATE_PROGRESS', payload: 20 })
 
   const filesToFix: string[] = []
-  await walkFileRecursive(TMP_FOLDER, async (file) => {
+  await fs.walkFileRecursive(TMP_FOLDER, async (file) => {
     console.log(`Found`, file)
     if (file.endsWith('.xhtml')) {
       filesToFix.push(file)
@@ -46,9 +58,10 @@ const fixComic = async (sourcePath: string, dispatch: Dispatch<AppAction>) => {
     }
   }
 
+  dispatch({ type: 'FIXING_UPDATE_PROGRESS', payload: 80 })
+
   console.log('repacking fixed epub into original file')
   await ipcRenderer.invoke('zip', { src: TMP_FOLDER, dest: destPath })
-  console.log('remove', TMP_FOLDER)
   await fs.rmdir(TMP_FOLDER, { recursive: true })
 
   console.log(`Your fixed file has been created at ${destPath}`)
@@ -63,10 +76,10 @@ export const fixComics: Effect = async (action, dispatch, getState) => {
     dispatch({ type: 'FIXING_UPDATE_PROGRESS', payload: 0 })
 
     try {
-      await Promise.all(state.files.map(file => fixComic(file, dispatch)))
+      await Promise.all(state.files.map(file => fixComic(file, dispatch, getState)))
     } catch (e) {
       console.error(e)
-      dispatch({ type: 'FIX_FAILED' })
+      dispatch({ type: 'FIX_FAILED', payload: e })
       new Notification('FixMyComic', {
         body: 'An error happened during the process'
       })

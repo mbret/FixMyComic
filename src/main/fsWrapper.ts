@@ -64,4 +64,19 @@ export const register = (ipcMain: IpcMain) => {
 
     return {}
   })
+
+  ipcMain.handle('copyFile', async (e, ...args: Parameters<typeof fs.promises.copyFile>) => {
+    try {
+      await fs.promises.copyFile(...args)
+    } catch (e) {
+      return {
+        error: {
+          message: e.message,
+          code: e.code
+        }
+      }
+    }
+
+    return {}
+  })
 }

@@ -1,5 +1,6 @@
 import { ipcRenderer } from "electron"
-import nativeFs from 'fs'
+import nativeFs, { Dirent } from 'fs'
+import path from 'path'
 
 const handleIpcResult = ({ result, error }: { result: any; error: any }) => {
   if (error) {
@@ -23,4 +24,23 @@ export const rmdir = async (...args: Parameters<typeof nativeFs.promises.rmdir>)
 export const readdir = async (...args: Parameters<typeof nativeFs.promises.readdir>) =>
   handleIpcResult(await ipcRenderer.invoke('readdir', ...args))
 
+export const copyFile = async (...args: Parameters<typeof nativeFs.promises.copyFile>) =>
+  handleIpcResult(await ipcRenderer.invoke('copyFile', ...args))
+
 export const readFileSync = nativeFs.readFileSync
+
+export const walkFileRecursive = async (dir: string, callback: (path: string) => void) => {
+  const files: Dirent[] = await readdir(dir, { encoding: 'utf-8', withFileTypes: true })
+  console.log(files)
+  await Promise.all(
+    files.map(async (file) => {
+      const subPath = path.join(dir, file.name);
+      const isDirectory = await ipcRenderer.invoke('isDirectory', subPath)
+      if (isDirectory) {
+        await walkFileRecursive(subPath, callback);
+      } else {
+        await callback(subPath)
+      }
+    })
+  )
+}
