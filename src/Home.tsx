@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { useFlow } from './flow';
 import { ProgressBar, Button, Alert, Spinner, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { DropBox } from './DropBox';
@@ -55,29 +55,42 @@ export const Home = () => {
           </DropdownButton>
         </div>
       </div>
-      <Form.Group controlId="formBasicCheckbox">
-        <Form.Check
-          type="checkbox"
-          label="Keep a backup of the original file"
-          readOnly
-          checked={state.backup}
-        />
-      </Form.Group>
-      <Button
-        variant="success"
-        disabled={state.fixing || state.files.length === 0}
-        onClick={_ => {
-          dispatch({ type: 'FIX_START' })
-        }}
-      >
-        {!state.fixing
-          ? 'Fix my layout !'
-          : (
-            <>
-              <Spinner size="sm" animation="border" /> Processing...
+      <Form>
+        <Form.Group >
+          <Form.Check
+            id="rtl"
+            type="checkbox"
+            label="Apply right to left behavior"
+            checked={state.rtl}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              dispatch({ type: 'UPDATE_FORM', payload: { rtl: e.target.checked } })
+            }}
+          />
+        </Form.Group>
+        <Form.Group controlId="formBasicCheckbox">
+          <Form.Check
+            type="checkbox"
+            label="Keep a backup of the original file"
+            readOnly
+            checked={state.backup}
+          />
+        </Form.Group>
+        <Button
+          variant="success"
+          disabled={state.fixing || state.files.length === 0}
+          onClick={_ => {
+            dispatch({ type: 'FIX_START' })
+          }}
+        >
+          {!state.fixing
+            ? 'Fix my layout !'
+            : (
+              <>
+                <Spinner size="sm" animation="border" /> Processing...
             </>
-          )}
-      </Button>
+            )}
+        </Button>
+      </Form>
       <div style={{
         marginTop: 10
       }}>

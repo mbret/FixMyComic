@@ -103,8 +103,6 @@ ipcMain.handle('zip', async (e, payload) => {
 
 })
 
-ipcMain.handle('readFile', (e, ...args: Parameters<typeof fs.promises.readFile>) => fs.promises.readFile(...args))
-
 ipcMain.handle('isDirectory', async (e, payload) => {
   const stat = await fs.promises.stat(payload)
 

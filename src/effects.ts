@@ -4,6 +4,27 @@ import { ipcRenderer } from "electron"
 import path from "path"
 import * as fs from './utils/fs'
 import { Dispatch } from "react"
+// @ts-ignore
+import cheerio from 'cheerio'
+
+const fixRTL = async (extractedEpubPath: string, getState: () => AppState) => {
+  const container = await fs.readFile(path.join(extractedEpubPath, 'META-INF', 'container.xml'), 'utf8')
+  const $container = cheerio.load(container, { xmlMode: true })
+
+  const opfPath = $container('rootfile').attr('full-path')
+  const fullOpfPath = path.join(extractedEpubPath, opfPath)
+
+  const opf = await fs.readFile(fullOpfPath, 'utf8')
+  const $opf = cheerio.load(opf, { xmlMode: true })
+
+  if (getState().rtl) {
+    $opf('spine').attr('page-progression-direction', 'rtl')
+  } else {
+    $opf('spine').removeAttr('page-progression-direction')
+  }
+
+  await ipcRenderer.invoke('writeFile', fullOpfPath,  $opf.html(), 'utf8')
+}
 
 const fixComic = async (
   sourcePath: string,
@@ -28,6 +49,8 @@ const fixComic = async (
 
   dispatch({ type: 'FIXING_UPDATE_PROGRESS', payload: 20 })
 
+  await fixRTL(TMP_FOLDER, getState)
+
   const filesToFix: string[] = []
   await fs.walkFileRecursive(TMP_FOLDER, async (file) => {
     console.log(`Found`, file)
@@ -42,7 +65,7 @@ const fixComic = async (
   dispatch({ type: 'FIXING_UPDATE_PROGRESS', payload: 50 })
 
   const appPath = await ipcRenderer.invoke('getAppPath')
-  const appleIbookXmlData = await ipcRenderer.invoke('readFile', path.join(appPath, 'src/assets/com.apple.ibooks.display-options.xml'), 'utf8')
+  const appleIbookXmlData = await fs.readFile(path.join(appPath, 'src/assets/com.apple.ibooks.display-options.xml'), 'utf8')
   try {
     await fs.mkdir(path.join(TMP_FOLDER, 'META-INF'))
   } catch (e) {

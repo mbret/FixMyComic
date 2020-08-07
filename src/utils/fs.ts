@@ -29,6 +29,9 @@ export const copyFile = async (...args: Parameters<typeof nativeFs.promises.copy
 
 export const readFileSync = nativeFs.readFileSync
 
+export const readFile = async (...args: Parameters<typeof nativeFs.promises.readFile>) =>
+  handleIpcResult(await ipcRenderer.invoke('readFile', ...args))
+
 export const walkFileRecursive = async (dir: string, callback: (path: string) => void) => {
   const files: Dirent[] = await readdir(dir, { encoding: 'utf-8', withFileTypes: true })
   console.log(files)

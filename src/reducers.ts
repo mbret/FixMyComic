@@ -2,6 +2,7 @@ import { Reducer, Dispatch } from "react"
 
 export const initialState: {
   backup: boolean;
+  rtl: boolean;
   fixing: boolean;
   fixingProgress: number;
   lastFixingError: Error | null;
@@ -9,6 +10,7 @@ export const initialState: {
   selectedInputFormat: 'epub-calibre';
 } = {
   backup: true,
+  rtl: false,
   fixing: false,
   fixingProgress: 0,
   lastFixingError: null,
@@ -24,6 +26,7 @@ export type AppAction =
   | { type: 'FIX_FAILED'; payload: Error }
   | { type: 'UPDATE_FILES'; payload: File[] }
   | { type: 'FIXING_UPDATE_PROGRESS'; payload: number }
+  | { type: 'UPDATE_FORM'; payload: { rtl: boolean } }
 
 export type Effect = (action: AppAction, dispatch: Dispatch<AppAction>, getState: () => AppState) => void
 
@@ -57,6 +60,11 @@ export const reducer: Reducer<AppState, AppAction> = (state, action) => {
       return {
         ...state,
         fixingProgress: action.payload,
+      }
+    case 'UPDATE_FORM':
+      return {
+        ...state,
+        ...action.payload,
       }
     default: return state
   }

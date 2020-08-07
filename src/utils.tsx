@@ -1,5 +1,6 @@
 // @ts-ignore
 import React from 'react'
+// @ts-ignore
 import AdmZip from 'adm-zip'
 import path from 'path'
 // @ts-ignore
@@ -16,7 +17,7 @@ let MAX_HEIGHT = 1024;
 export const fixFile = async (tmpFolder: string, filePath: string) => {
   console.log(`Fixing file ${filePath}`)
   const dirPath = path.dirname(filePath)
-  const data = fs.readFileSync(filePath, 'utf8')
+  const data = await fs.readFile(filePath, 'utf8')
   const $ = cheerio.load(data, { xmlMode: true })
 
   let imgSrc

@@ -79,4 +79,22 @@ export const register = (ipcMain: IpcMain) => {
 
     return {}
   })
+
+  ipcMain.handle('readFile', async (e, ...args: Parameters<typeof fs.promises.readFile>) => {
+    let result
+    try {
+      result = await fs.promises.readFile(...args)
+    } catch (e) {
+      return {
+        error: {
+          message: e.message,
+          code: e.code
+        }
+      }
+    }
+
+    return {
+      result
+    }
+  })
 }
