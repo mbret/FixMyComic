@@ -26,7 +26,6 @@
  * ```
  */
 import { hot } from "react-hot-loader";
-// import 'semantic-ui-css/semantic.min.css'
 import 'bootstrap/dist/css/bootstrap.min.css';  
 import './index.css';
 import React from 'react';

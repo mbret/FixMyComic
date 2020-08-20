@@ -93,20 +93,14 @@
     "archiver": "^5.0.0",
     "bootstrap": "^4.5.0",
     "cheerio": "^1.0.0-rc.3",
-    "decompress-zip": "^0.2.2",
     "electron-squirrel-startup": "^1.0.0",
     "eslint-plugin-react": "^7.20.3",
     "extract-zip": "^2.0.1",
     "image-size": "^0.8.3",
-    "node-stream-zip": "^1.11.2",
     "react": "^16.13.1",
     "react-bootstrap": "^1.2.2",
     "react-dom": "^16.13.1",
     "react-dropzone": "^11.0.2",
-    "react-hot-loader": "^4.12.21",
-    "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^1.0.0",
-    "yauzl": "^2.10.0",
-    "yazl": "^2.5.1"
+    "react-hot-loader": "^4.12.21"
   }
 }

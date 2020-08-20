@@ -5,10 +5,9 @@ export const createFlow = <R extends Reducer<any, any>>(
   initialState: ReducerState<R>,
   effects: any[]
 ) => {
-  const FlowContext = createContext<{
-    state: ReducerState<R>;
-    dispatch: Dispatch<ReducerAction<R>>;
-  }>(undefined);
+  // @todo use FlowContext = { value, onChange } with event listener to avoid re-rendering all the time
+  const FlowContext = createContext<ReducerState<R>>(undefined);
+  const DispatchContext = createContext<Dispatch<ReducerAction<R>>>(undefined);
 
   type Props = {
     children: React.ReactNode;
@@ -29,19 +28,29 @@ export const createFlow = <R extends Reducer<any, any>>(
         .all(effects.map(effect => effect(newAction, enhancedDispatch, () => stateRef.current)))
     }, [newAction, enhancedDispatch])
 
-    const value = useMemo(() => ({ state, dispatch: enhancedDispatch }), [state, enhancedDispatch])
+    const value = useMemo(() => state, [state])
 
     return (
       <FlowContext.Provider value={value}>
-        {children}
+        <DispatchContext.Provider value={enhancedDispatch}>
+          {children}
+        </DispatchContext.Provider>
       </FlowContext.Provider>
     )
   }
 
-  const useFlow = () => useContext(FlowContext)
+  function useFlowState <G = ReducerState<R>>(selector: (state: ReducerState<R>) => G = state => state) {
+    const state = useContext(FlowContext)
+    const derivatedState = selector(state)
+
+    return useMemo(() => derivatedState, [derivatedState])
+  }
+
+  const useDispatch = () => useContext(DispatchContext)
 
   return {
     FlowProvider,
-    useFlow,
+    useState: useFlowState,
+    useDispatch,
   }
 }

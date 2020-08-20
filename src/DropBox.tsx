@@ -1,13 +1,15 @@
-import React from 'react';
+/**
+ * @see https://react-dropzone.js.org/
+ */
+import React, { memo } from 'react';
 import { useDropzone } from 'react-dropzone'
-import { useFlow } from './flow';
-import * as effects from './effects';
-import { reducer, initialState } from './reducers';
+import { useState, useDispatch } from './flow';
 
-export const DropBox = () => {
-  const { state, dispatch } = useFlow()
-  // const styles = useStyles()
+export const DropBox = memo(() => {
+  const dispatch = useDispatch()
+  const files = useState(state => state.files)
   const { getRootProps, getInputProps } = useDropzone({
+    accept: 'application/epub+zip',
     onDrop: (acceptedFiles: File[]) => {
       dispatch({ type: 'UPDATE_FILES', payload: acceptedFiles })
     }
@@ -23,15 +25,15 @@ export const DropBox = () => {
       {...getRootProps()}
     >
       <input {...getInputProps()} />
-      {state.files.length
+      {files.length
         ? (
-          state.files.map(file => (
+          files.map(file => (
             <p key={file}>{file}</p>
           ))
         )
         : (
-          <p>Drag 'n' drop some files here, or click to select files</p>
+          <p>Drag and drop some files here. Only <b>.epub</b> are supported at the time.</p>
         )}
     </div>
   )
-};
+});

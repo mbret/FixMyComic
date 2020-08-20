@@ -1,10 +1,11 @@
 import React, { ChangeEvent } from 'react';
-import { useFlow } from './flow';
-import { ProgressBar, Button, Alert, Spinner, Dropdown, DropdownButton, Form } from 'react-bootstrap';
+import { useState, useDispatch } from './flow';
+import { ProgressBar, Button, Alert, Spinner, Dropdown, DropdownButton, Form, Tabs, Tab } from 'react-bootstrap';
 import { DropBox } from './DropBox';
 
 export const Home = () => {
-  const { state, dispatch } = useFlow()
+  const dispatch = useDispatch()
+  const state = useState()
   const styles = useStyles()
 
   return (
@@ -34,28 +35,44 @@ export const Home = () => {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-        }}>
-          <div style={{
-            marginRight: 10
-          }}>Input format</div>
-          <DropdownButton title={state.selectedInputFormat} variant="info">
-            <Dropdown.Item href="#/action-1">epub-calibre</Dropdown.Item>
-          </DropdownButton>
-        </div>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
+          marginBottom: 10,
         }}>
           <div style={{
             marginRight: 10
           }}>Output format</div>
-          <DropdownButton title="fixed-layout" variant="info">
-            <Dropdown.Item href="#/action-1">fixed-layout</Dropdown.Item>
+          <DropdownButton title="epub" variant="info">
+            <Dropdown.Item href="#/action-1">.epub</Dropdown.Item>
           </DropdownButton>
         </div>
       </div>
       <Form>
+        <div style={{
+          marginBottom: 10,
+        }}>
+          <Tabs
+            id="controlled-tab-example"
+
+          >
+            <Tab eventKey="home" title="Google Drive" >
+              <div style={{
+                padding: 15,
+                backgroundColor: 'rgba(73, 80, 87, 0.2)'
+              }}>
+                <Form.Group controlId="formBasicCheckbox">
+                  <Form.Check
+                    type="checkbox"
+                    label="Apply fixed layout"
+                    readOnly
+                    checked={state.fixedLayout}
+                    // onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    //   dispatch({ type: 'UPDATE_FORM', payload: { rtl: state.rtl, fixedLayout: e.target.checked } })
+                    // }}
+                  />
+                </Form.Group>
+              </div>
+            </Tab>
+          </Tabs>
+        </div>
         <Form.Group >
           <Form.Check
             id="rtl"
@@ -63,7 +80,7 @@ export const Home = () => {
             label="Apply right to left behavior"
             checked={state.rtl}
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              dispatch({ type: 'UPDATE_FORM', payload: { rtl: e.target.checked } })
+              dispatch({ type: 'UPDATE_FORM', payload: { rtl: e.target.checked, fixedLayout: state.fixedLayout } })
             }}
           />
         </Form.Group>
@@ -83,7 +100,7 @@ export const Home = () => {
           }}
         >
           {!state.fixing
-            ? 'Fix my layout !'
+            ? 'Fix my comic !'
             : (
               <>
                 <Spinner size="sm" animation="border" /> Processing...

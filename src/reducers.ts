@@ -3,6 +3,7 @@ import { Reducer, Dispatch } from "react"
 export const initialState: {
   backup: boolean;
   rtl: boolean;
+  fixedLayout: boolean;
   fixing: boolean;
   fixingProgress: number;
   lastFixingError: Error | null;
@@ -11,6 +12,7 @@ export const initialState: {
 } = {
   backup: true,
   rtl: false,
+  fixedLayout: true,
   fixing: false,
   fixingProgress: 0,
   lastFixingError: null,
@@ -26,7 +28,7 @@ export type AppAction =
   | { type: 'FIX_FAILED'; payload: Error }
   | { type: 'UPDATE_FILES'; payload: File[] }
   | { type: 'FIXING_UPDATE_PROGRESS'; payload: number }
-  | { type: 'UPDATE_FORM'; payload: { rtl: boolean } }
+  | { type: 'UPDATE_FORM'; payload: { rtl: boolean; fixedLayout: boolean } }
 
 export type Effect = (action: AppAction, dispatch: Dispatch<AppAction>, getState: () => AppState) => void
 
@@ -38,17 +40,20 @@ export const reducer: Reducer<AppState, AppAction> = (state, action) => {
         ...state,
         files: action.payload.map(f => f.path)
       }
+      
     case 'FIX_START':
       return {
         ...state,
         fixing: true,
       }
+
     case 'FIX_SUCCESS':
       return {
         ...state,
         fixing: false,
         lastFixingError: null,
       }
+
     case 'FIX_FAILED':
       return {
         ...state,
@@ -56,16 +61,19 @@ export const reducer: Reducer<AppState, AppAction> = (state, action) => {
         fixingProgress: 0,
         lastFixingError: action.payload,
       }
+
     case 'FIXING_UPDATE_PROGRESS':
       return {
         ...state,
         fixingProgress: action.payload,
       }
+
     case 'UPDATE_FORM':
       return {
         ...state,
         ...action.payload,
       }
+
     default: return state
   }
 }
