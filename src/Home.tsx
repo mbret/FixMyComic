@@ -2,24 +2,19 @@ import React, { ChangeEvent } from 'react';
 import { useState, useDispatch } from './flow';
 import { ProgressBar, Button, Alert, Spinner, Dropdown, DropdownButton, Form, Tabs, Tab } from 'react-bootstrap';
 import { DropBox } from './DropBox';
+import { getTotalFixingProgress } from './reducers';
 
 export const Home = () => {
   const dispatch = useDispatch()
   const state = useState()
+  const fixingProgress = useState(getTotalFixingProgress)
   const styles = useStyles()
 
   return (
     <div style={{
       backgroundColor: 'white'
     }}>
-      <Alert variant="info">
-        <Alert.Heading style={styles.title}>Hello there</Alert.Heading>
-        <p style={styles.text}>
-          This app provide a quick and painless way to apply a fixed layout to your comic. This is required
-          by some reading app (Kindle, Google Play Book, ...)
-          in order to display an epub with images (manga, comic) correctly, without unwanted margins for example.
-        </p>
-        <hr />
+      <Alert variant="warning">
         <p className="mb-0" style={styles.text}>
           <b>This is a development version.</b>
           It is recommended  that you keep the option <b>Keep a backup of the original file</b> checked for now.
@@ -116,14 +111,14 @@ export const Home = () => {
             An error occured during the process
           </Alert>
         )}
-        {state.fixingProgress === 100 && (
+        {fixingProgress === 100 && (
           <Alert variant="success">
             Your comic has been fixed with success
           </Alert>
         )}
         {}
         {state.fixing && (
-          <ProgressBar now={state.fixingProgress} animated={false} variant="success" />
+          <ProgressBar now={fixingProgress} animated={false} variant="success" />
         )}
       </div>
     </div>

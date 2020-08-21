@@ -5,7 +5,7 @@ export const initialState: {
   rtl: boolean;
   fixedLayout: boolean;
   fixing: boolean;
-  fixingProgress: number;
+  fixingProgress: { [key: string]: number };
   lastFixingError: Error | null;
   files: string[];
   selectedInputFormat: 'epub-calibre';
@@ -14,7 +14,7 @@ export const initialState: {
   rtl: false,
   fixedLayout: true,
   fixing: false,
-  fixingProgress: 0,
+  fixingProgress: {},
   lastFixingError: null,
   files: [],
   selectedInputFormat: 'epub-calibre'
@@ -27,24 +27,26 @@ export type AppAction =
   | { type: 'FIX_SUCCESS' }
   | { type: 'FIX_FAILED'; payload: Error }
   | { type: 'UPDATE_FILES'; payload: File[] }
-  | { type: 'FIXING_UPDATE_PROGRESS'; payload: number }
+  | { type: 'ADD_FIXING_PROGRESS_TASK'; payload: string }
+  | { type: 'UPDATE_FIXING_PROGRESS'; payload: { key: string; progress: number } }
   | { type: 'UPDATE_FORM'; payload: { rtl: boolean; fixedLayout: boolean } }
 
 export type Effect = (action: AppAction, dispatch: Dispatch<AppAction>, getState: () => AppState) => void
 
 export const reducer: Reducer<AppState, AppAction> = (state, action) => {
-  console.log('reducer', action)
+  console.log('reducer', action, state)
   switch (action.type) {
     case 'UPDATE_FILES':
       return {
         ...state,
         files: action.payload.map(f => f.path)
       }
-      
+
     case 'FIX_START':
       return {
         ...state,
         fixing: true,
+        fixingProgress: {},
       }
 
     case 'FIX_SUCCESS':
@@ -58,14 +60,26 @@ export const reducer: Reducer<AppState, AppAction> = (state, action) => {
       return {
         ...state,
         fixing: false,
-        fixingProgress: 0,
+        fixingProgress: {},
         lastFixingError: action.payload,
       }
 
-    case 'FIXING_UPDATE_PROGRESS':
+    case 'ADD_FIXING_PROGRESS_TASK':
       return {
         ...state,
-        fixingProgress: action.payload,
+        fixingProgress: {
+          ...state.fixingProgress,
+          [action.payload]: 0,
+        },
+      }
+
+    case 'UPDATE_FIXING_PROGRESS':
+      return {
+        ...state,
+        fixingProgress: {
+          ...state.fixingProgress,
+          [action.payload.key]: action.payload.progress
+        },
       }
 
     case 'UPDATE_FORM':
@@ -76,4 +90,10 @@ export const reducer: Reducer<AppState, AppAction> = (state, action) => {
 
     default: return state
   }
+}
+
+export const getTotalFixingProgress = (state: AppState) => {
+  const taskValues = Object.values(state.fixingProgress)
+
+  return taskValues.reduce((progress, value) => progress + value, 0) / taskValues.length
 }
