@@ -2,7 +2,7 @@ import { Effect, AppAction, AppState } from "./reducers"
 import { ipcRenderer } from "electron"
 import * as fs from './utils/fs'
 import { Dispatch } from "react"
-import { fixFixedLayout, fixRTL, fixAppleFixedLayout } from "./utils/comics"
+import { fixFixedLayout, fixRTL, fixAppleFixedLayout, getOpfContent } from "./utils/comics"
 
 const fixComic = async (
   sourcePath: string,
@@ -30,7 +30,11 @@ const fixComic = async (
   await ipcRenderer.invoke('unzip', { source: sourcePath, dir: TMP_FOLDER })
   dispatch({ type: 'UPDATE_FIXING_PROGRESS', payload: { key: `${sourcePath}:unzip`, progress: 100 } })
 
-  console.log(`Extracted into ${TMP_FOLDER}`)
+  const $opf = await getOpfContent(TMP_FOLDER)
+  const version = $opf('package').attr('version')
+  if (version !== '2.0') {
+    throw new Error(`Unsupported ${version} epub version`)
+  }
 
   const tasks = [
     fixRTL(TMP_FOLDER, getState)
@@ -79,7 +83,7 @@ export const fixComics: Effect = async (action, dispatch, getState) => {
       console.error(e)
       dispatch({ type: 'FIX_FAILED', payload: e })
       new Notification('FixMyComic', {
-        body: 'An error happened during the process'
+        body: `An error happened during the process (${e.message})`
       })
       return
     }

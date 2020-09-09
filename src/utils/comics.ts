@@ -5,18 +5,26 @@ import * as fs from './fs'
 import cheerio from 'cheerio'
 import { imageSize } from 'image-size'
 
-/**
- * Set `page-progression-direction` with the `rtl` value
- */
-export const fixRTL = async (extractedEpubPath: string, getState: () => AppState) => {
+const getOpfFilePath = async (extractedEpubPath: string) => {
   const container = await fs.readFile(path.join(extractedEpubPath, 'META-INF', 'container.xml'), 'utf8')
   const $container = cheerio.load(container, { xmlMode: true })
 
   const opfPath = $container('rootfile').attr('full-path')
-  const fullOpfPath = path.join(extractedEpubPath, opfPath)
+  return path.join(extractedEpubPath, opfPath)
+}
 
+export const getOpfContent = async (extractedEpubPath: string) => {
+  const fullOpfPath = await getOpfFilePath(extractedEpubPath)
   const opf = await fs.readFile(fullOpfPath, 'utf8')
-  const $opf = cheerio.load(opf, { xmlMode: true })
+  return cheerio.load(opf, { xmlMode: true })
+}
+
+/**
+ * Set `page-progression-direction` with the `rtl` value
+ */
+export const fixRTL = async (extractedEpubPath: string, getState: () => AppState) => {
+  const fullOpfPath = await getOpfFilePath(extractedEpubPath)
+  const $opf = await getOpfContent(extractedEpubPath)
 
   if (getState().rtl) {
     $opf('spine').attr('page-progression-direction', 'rtl')
