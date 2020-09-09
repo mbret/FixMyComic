@@ -7,3 +7,7 @@ Ever wondered why your comic sometimes renders weirdly on your e-readers ? This 
 A common example is an epub that renders fine on Kobo but will have white margin on Google Play Book. Kobo handle manga in a more flexible way than Google Play Book and as a result you might need to fix your epub to apply a strict fixed layour on every pages.
 
 This app will help you fix the common issue you can have with a specific engine.
+
+## Google support
+
+The google specs can be found at https://support.google.com/books/partner/answer/3316879?hl=en
