@@ -50,12 +50,19 @@ const fixComic = async (
           dispatch({ type: 'UPDATE_FIXING_PROGRESS', payload: { key: `${sourcePath}:fix-fixed-layout`, progress: 100 } })
         }),
     )
+  } else {
+    dispatch({ type: 'UPDATE_FIXING_PROGRESS', payload: { key: `${sourcePath}:fix-fixed-layout`, progress: 100 } })
+  }
+
+  if (getState().createOrFixAppleOptions) {
     tasks.push(
       fixAppleFixedLayout(TMP_FOLDER)
         .then(async () => {
           dispatch({ type: 'UPDATE_FIXING_PROGRESS', payload: { key: `${sourcePath}:fix-apple-fixed-layout`, progress: 100 } })
         }),
     )
+  } else {
+    dispatch({ type: 'UPDATE_FIXING_PROGRESS', payload: { key: `${sourcePath}:fix-apple-fixed-layout`, progress: 100 } })
   }
 
   await Promise.all(tasks)

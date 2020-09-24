@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { useState, useDispatch } from './flow';
-import { ProgressBar, Button, Alert, Spinner, Dropdown, DropdownButton, Form, Tabs, Tab } from 'react-bootstrap';
+import { ProgressBar, Button, Alert, Spinner, Dropdown, DropdownButton, Form, Tabs, Tab, Badge, Col } from 'react-bootstrap';
 import { DropBox } from './DropBox';
 import { getTotalFixingProgress } from './reducers';
 
@@ -46,38 +46,73 @@ export const Home = () => {
         }}>
           <Tabs
             id="controlled-tab-example"
-
           >
             <Tab eventKey="home" title="Google Drive" >
               <div style={{
                 padding: 15,
                 backgroundColor: 'rgba(73, 80, 87, 0.2)'
               }}>
-                <Form.Group controlId="formBasicCheckbox">
-                  <Form.Check
-                    type="checkbox"
-                    label="Apply fixed layout"
-                    readOnly
-                    checked={state.fixedLayout}
-                    // onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    //   dispatch({ type: 'UPDATE_FORM', payload: { rtl: state.rtl, fixedLayout: e.target.checked } })
-                    // }}
-                  />
-                </Form.Group>
+                Nothing specific for Google Drive at the moment
               </div>
             </Tab>
           </Tabs>
         </div>
         <Form.Group >
-          <Form.Check
-            id="rtl"
-            type="checkbox"
-            label="Apply right to left behavior"
-            checked={state.rtl}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              dispatch({ type: 'UPDATE_FORM', payload: { rtl: e.target.checked, fixedLayout: state.fixedLayout } })
-            }}
-          />
+          <Form.Row>
+            <Col>
+              <Form.Check
+                id="fixLayout"
+                type="checkbox"
+                label="Apply a fix layout to epub"
+                checked={state.fixedLayout}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  dispatch({ type: 'UPDATE_FORM', payload: { fixedLayout: e.target.checked } })
+                }}
+              />
+            </Col>
+            <Form.Label >
+              <Badge variant="secondary">epub2</Badge>&nbsp;
+              <Badge variant="info">epub3</Badge>
+            </Form.Label>
+          </Form.Row>
+        </Form.Group>
+        <Form.Group >
+          <Form.Row>
+            <Col>
+              <Form.Check
+                id="createOrFixAppleOptions"
+                type="checkbox"
+                label="Create or fix com.apple.ibooks.display-options"
+                checked={state.createOrFixAppleOptions}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  dispatch({ type: 'UPDATE_FORM', payload: { createOrFixAppleOptions: e.target.checked } })
+                }}
+              />
+            </Col>
+            <Form.Label >
+              <Badge variant="secondary">epub2</Badge>&nbsp;
+              <Badge variant="info">epub3</Badge>
+            </Form.Label>
+          </Form.Row>
+        </Form.Group>
+        <Form.Group >
+          <Form.Row>
+            <Col>
+              <Form.Check
+                id="rtl"
+                type="checkbox"
+                label="Apply right to left reading"
+                checked={state.rtl}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  dispatch({ type: 'UPDATE_FORM', payload: { rtl: e.target.checked, fixedLayout: state.fixedLayout } })
+                }}
+              />
+            </Col>
+            <Form.Label >
+              <Badge variant="secondary">epub2</Badge>&nbsp;
+              <Badge variant="info">epub3</Badge>
+            </Form.Label>
+          </Form.Row>
         </Form.Group>
         <Form.Group controlId="formBasicCheckbox">
           <Form.Check

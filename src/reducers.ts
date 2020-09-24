@@ -4,6 +4,7 @@ export const initialState: {
   backup: boolean;
   rtl: boolean;
   fixedLayout: boolean;
+  createOrFixAppleOptions: boolean;
   fixing: boolean;
   fixingProgress: { [key: string]: number };
   lastFixingError: Error | null;
@@ -13,6 +14,7 @@ export const initialState: {
   backup: true,
   rtl: false,
   fixedLayout: true,
+  createOrFixAppleOptions: true,
   fixing: false,
   fixingProgress: {},
   lastFixingError: null,
@@ -29,7 +31,7 @@ export type AppAction =
   | { type: 'UPDATE_FILES'; payload: File[] }
   | { type: 'ADD_FIXING_PROGRESS_TASK'; payload: string }
   | { type: 'UPDATE_FIXING_PROGRESS'; payload: { key: string; progress: number } }
-  | { type: 'UPDATE_FORM'; payload: { rtl: boolean; fixedLayout: boolean } }
+  | { type: 'UPDATE_FORM'; payload: { rtl?: boolean; fixedLayout?: boolean; createOrFixAppleOptions?: boolean } }
 
 export type Effect = (action: AppAction, dispatch: Dispatch<AppAction>, getState: () => AppState) => void
 

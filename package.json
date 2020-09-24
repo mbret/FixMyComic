@@ -76,22 +76,22 @@
     "@typescript-eslint/parser": "^4.1.0",
     "cross-env": "^7.0.2",
     "css-loader": "^4.3.0",
-    "electron": "10.1.1",
-    "eslint": "^7.8.1",
+    "electron": "10.1.2",
+    "eslint": "^7.9.0",
     "eslint-plugin-import": "^2.22.0",
     "fork-ts-checker-webpack-plugin": "^5.1.0",
     "node-loader": "^1.0.1",
     "style-loader": "^1.2.1",
-    "ts-loader": "^8.0.3",
+    "ts-loader": "^8.0.4",
     "typescript": "^3.9.7"
   },
   "dependencies": {
     "@types/archiver": "^3.1.0",
-    "@types/cheerio": "^0.22.21",
+    "@types/cheerio": "^0.22.22",
     "@types/react": "^16.9.43",
     "@types/react-dom": "^16.9.8",
     "adm-zip": "^0.4.16",
-    "archiver": "^5.0.0",
+    "archiver": "^5.0.2",
     "bootstrap": "^4.5.0",
     "cheerio": "^1.0.0-rc.3",
     "electron-squirrel-startup": "^1.0.0",
@@ -101,8 +101,8 @@
     "react": "^16.13.1",
     "react-bootstrap": "^1.2.2",
     "react-dom": "^16.13.1",
-    "react-dropzone": "^11.0.2",
-    "react-hot-loader": "^4.12.21",
-    "readable-stream": "^2.3.7"
+    "readable-stream": "^2.3.7",
+    "react-dropzone": "^11.2.0",
+    "react-hot-loader": "^4.13.0"
   }
 }
