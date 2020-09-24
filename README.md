@@ -8,6 +8,7 @@ A common example is an epub that renders fine on Kobo but will have white margin
 
 This app will help you fix the common issue you can have with a specific engine.
 
-## Google support
+## Resources
 
-The google specs can be found at https://support.google.com/books/partner/answer/3316879?hl=en
+- Google fixed layout support https://support.google.com/books/partner/answer/3316879?hl=en
+- epub3 fixed layout spreadsheet http://idpf.org/epub/fxl/
